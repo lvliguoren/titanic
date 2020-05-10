@@ -2,7 +2,8 @@ from preprocessing import get_data
 from sklearn.preprocessing import StandardScaler
 from sklearn.svm import SVC
 from sklearn.pipeline import Pipeline
-from sklearn.model_selection import  cross_val_predict
+from sklearn.model_selection import cross_val_predict
+from sklearn.model_selection import cross_val_score
 from sklearn.model_selection import learning_curve
 from sklearn.metrics import precision_recall_curve
 import numpy as np
@@ -24,7 +25,7 @@ def plot_precision_recall_vs_threshold(model, X, y):
 # 绘制学习曲线
 def plot_learning_curve(model, X, y):
     train_sizes = np.linspace(0.1, 1.0, endpoint=True, dtype='float')
-    thresholds,train_scores,test_scores = learning_curve(model,X,y,cv=10,train_sizes=train_sizes,scoring="accuracy")
+    thresholds,train_scores,test_scores = learning_curve(model,X,y,train_sizes=train_sizes,scoring="accuracy")
     train_scores_mean = np.mean(train_scores,axis=1)
     test_scores_mean = np.mean(test_scores, axis=1)
     plt.plot(thresholds,train_scores_mean,"b--", label="Train Accuracy")
@@ -35,14 +36,16 @@ def plot_learning_curve(model, X, y):
     plt.show()
 
 train_df = get_data("train.csv")
-train_f = train_df.filter(regex='Survived|Age|SibSp|Parch|Fare|Embarked_.*|Sex_.*|Pclass_.*')
+train_f = train_df.filter(regex='Survived|SibSp|Parch|Fare|Embarked_.*|Sex_.*|Pclass_.*|Age_.*')
 train_np = train_f.values
 train_X = train_np[:,1:]
 train_y = train_np[:,0]
 
 rbf_kernel_svm_clf = Pipeline([
     ("scaler", StandardScaler()),
-    ("svm_clf", SVC(kernel="rbf", gamma=5, C=10))
+    ("svm_clf", SVC(kernel="rbf"))
 ])
-plot_learning_curve(rbf_kernel_svm_clf, train_X, train_y)
 
+
+# plot_learning_curve(rbf_kernel_svm_clf, train_X, train_y)
+print(cross_val_score(rbf_kernel_svm_clf, train_X, train_y, cv=10))
