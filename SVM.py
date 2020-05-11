@@ -36,16 +36,17 @@ def plot_learning_curve(model, X, y):
     plt.show()
 
 train_df = get_data("train.csv")
-train_f = train_df.filter(regex='Survived|SibSp|Parch|Fare|Embarked_.*|Sex_.*|Pclass_.*|Age_.*')
+train_f = train_df.filter(regex='Survived|SibSp|Parch|Fare_.*|Embarked_.*|Sex_.*|Pclass_.*|Age_.*|Cabin_.*')
 train_np = train_f.values
 train_X = train_np[:,1:]
 train_y = train_np[:,0]
 
 rbf_kernel_svm_clf = Pipeline([
-    ("scaler", StandardScaler()),
-    ("svm_clf", SVC(kernel="rbf"))
+    # ("scaler", StandardScaler()),
+    ("svm_clf", SVC(kernel="rbf", gamma="auto"))
 ])
 
-
-# plot_learning_curve(rbf_kernel_svm_clf, train_X, train_y)
-print(cross_val_score(rbf_kernel_svm_clf, train_X, train_y, cv=10))
+# print(train_f)
+plot_learning_curve(rbf_kernel_svm_clf, train_X, train_y)
+# print(cross_val_score(rbf_kernel_svm_clf, train_X, train_y, cv=10))
+# plot_precision_recall_vs_threshold(rbf_kernel_svm_clf, train_X, train_y)

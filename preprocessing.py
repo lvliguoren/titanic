@@ -8,7 +8,7 @@ def  get_data(file_name):
     # pd.set_option('display.max_rows', None)
 
     data_pre = pd.read_csv("data/" + file_name)
-    data_pre.drop(index=(data_pre[np.isnan(data_pre.Age)].index), inplace=True)
+    data_pre.drop(index=(data_pre[data_pre.Age.isnull()].index), inplace=True)
     # Drop之后要重新建立索引，不然遍历会有问题
     data_pre.reset_index(drop=True, inplace=True)
     for i in range(len(data_pre)):
@@ -31,12 +31,19 @@ def  get_data(file_name):
         elif data_pre.loc[i, "Age"] > 64.28:
             data_pre.loc[i, "Age"] = 8
 
+    data_pre.loc[data_pre.Cabin.notnull(),"Cabin"] = "Yes"
+    data_pre.loc[data_pre.Cabin.isnull(),"Cabin"] = "No"
+    data_pre.loc[data_pre.Fare <= 51.23,"Fare"] = 51.0
+    data_pre.loc[(data_pre.Fare <= 102.47) & (data_pre.Fare > 51.23),"Fare"] = 102.0
+    data_pre.loc[data_pre.Fare > 102.48 ,"Fare"] = 150.0
+    dummies_Cabin = pd.get_dummies(data_pre["Cabin"],prefix="Cabin")
     dummies_Embarked = pd.get_dummies(data_pre["Embarked"], prefix= "Embarked")
     dummies_Sex = pd.get_dummies(data_pre["Sex"], prefix= "Sex")
     dummies_Pclass = pd.get_dummies(data_pre["Pclass"], prefix= "Pclass")
     dummies_Age = pd.get_dummies(data_pre["Age"], prefix="Age")
+    dummies_Fare = pd.get_dummies(data_pre["Fare"], prefix="Fare")
 
-    data_pre = pd.concat([data_pre, dummies_Embarked, dummies_Sex, dummies_Pclass, dummies_Age], axis=1)
-    data_pre.drop(columns=["PassengerId","Pclass","Sex","Embarked","Cabin","Name","Ticket","Age"], inplace=True)
+    data_pre = pd.concat([data_pre, dummies_Embarked, dummies_Sex, dummies_Pclass, dummies_Age, dummies_Cabin, dummies_Fare], axis=1)
+    data_pre.drop(columns=["PassengerId","Pclass","Sex","Embarked","Cabin","Name","Ticket","Age", "Fare"], inplace=True)
 
     return data_pre
