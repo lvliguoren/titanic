@@ -8,6 +8,7 @@ from sklearn.model_selection import learning_curve
 from sklearn.metrics import precision_recall_curve
 import numpy as np
 import matplotlib.pyplot as plt
+import pandas as pd
 
 
 # 绘制精度和召回率
@@ -36,17 +37,26 @@ def plot_learning_curve(model, X, y):
     plt.show()
 
 train_df = get_data("train.csv")
-train_f = train_df.filter(regex='Survived|SibSp|Parch|Fare_.*|Embarked_.*|Sex_.*|Pclass_.*|Age_.*|Cabin_.*')
+train_f = train_df.filter(regex='Survived|SibSp|Parch|Sex_.*|Pclass_.*|Age_.*|Cabin_.*')
 train_np = train_f.values
 train_X = train_np[:,1:]
 train_y = train_np[:,0]
 
+test_df = get_data("test.csv")
+test_f = test_df.filter(regex='SibSp|Parch|Sex_.*|Pclass_.*|Age_.*|Cabin_.*')
+test_X = test_f.values
+
 rbf_kernel_svm_clf = Pipeline([
     # ("scaler", StandardScaler()),
-    ("svm_clf", SVC(kernel="rbf", gamma="auto"))
+    ("svm_clf", SVC(kernel="rbf", gamma="auto",C=5))
 ])
 
-# print(train_f)
-plot_learning_curve(rbf_kernel_svm_clf, train_X, train_y)
+# plot_learning_curve(rbf_kernel_svm_clf, train_X, train_y)
 # print(cross_val_score(rbf_kernel_svm_clf, train_X, train_y, cv=10))
 # plot_precision_recall_vs_threshold(rbf_kernel_svm_clf, train_X, train_y)
+
+# 对测试集做出预测
+rbf_kernel_svm_clf.fit(train_X, train_y)
+predictions = rbf_kernel_svm_clf.predict(test_X)
+result = pd.DataFrame({'PassengerId':test_df['PassengerId'].values, 'Survived':predictions})
+result.to_csv("data/logistic_regression_predictions.csv", index=False)

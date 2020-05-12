@@ -1,16 +1,16 @@
 import pandas as pd
 import numpy as np
+from sklearn.ensemble import RandomForestRegressor
 
-def  get_data(file_name):
+def get_data(file_name):
     # 显示所有列
     pd.set_option('display.max_columns', None)
     # 显示所有行
-    # pd.set_option('display.max_rows', None)
+    pd.set_option('display.max_rows', None)
 
     data_pre = pd.read_csv("data/" + file_name)
-    data_pre.drop(index=(data_pre[data_pre.Age.isnull()].index), inplace=True)
-    # Drop之后要重新建立索引，不然遍历会有问题
-    data_pre.reset_index(drop=True, inplace=True)
+    data_pre.loc[data_pre.Fare.isnull(),"Fare"] = np.mean(data_pre.Fare)
+    data_pre = set_missing_age(data_pre)
     for i in range(len(data_pre)):
         if data_pre.loc[i,"Age"] <= 8.38:
             data_pre.loc[i, "Age"] = 0
@@ -44,6 +44,25 @@ def  get_data(file_name):
     dummies_Fare = pd.get_dummies(data_pre["Fare"], prefix="Fare")
 
     data_pre = pd.concat([data_pre, dummies_Embarked, dummies_Sex, dummies_Pclass, dummies_Age, dummies_Cabin, dummies_Fare], axis=1)
-    data_pre.drop(columns=["PassengerId","Pclass","Sex","Embarked","Cabin","Name","Ticket","Age", "Fare"], inplace=True)
+    data_pre.drop(columns=["Pclass","Sex","Embarked","Cabin","Name","Ticket","Age", "Fare"], inplace=True)
 
     return data_pre
+
+def set_missing_age(data):
+    data_age = data[['Age','Fare', 'Parch', 'SibSp', 'Pclass']]
+    known_age = data_age[data_age.Age.notnull()].values
+    unknown_age = data_age[data_age.Age.isnull()].values
+
+    train_X = known_age[:,1:]
+    train_y = known_age[:,0]
+
+    predict_X = unknown_age[:,1:]
+    rfr = RandomForestRegressor(random_state=42)
+
+    rfr.fit(train_X, train_y)
+
+    predict_y = rfr.predict(predict_X)
+
+    data.loc[data.Age.isnull(),"Age"] = predict_y
+
+    return data
