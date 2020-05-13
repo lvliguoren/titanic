@@ -36,6 +36,12 @@ def get_data(file_name):
     data_pre.loc[data_pre.Fare <= 51.23,"Fare"] = 51.0
     data_pre.loc[(data_pre.Fare <= 102.47) & (data_pre.Fare > 51.23),"Fare"] = 102.0
     data_pre.loc[data_pre.Fare > 102.48 ,"Fare"] = 150.0
+    data_pre.loc[data_pre.Name.str.contains("Mr"), "Name"] = "0"
+    data_pre.loc[data_pre.Name.str.contains("Mrs"), "Name"] = "1"
+    data_pre.loc[data_pre.Name.str.contains("Miss"), "Name"] = "2"
+    data_pre.loc[data_pre.Name.str.contains("Master"), "Name"] = "3"
+    data_pre.loc[(data_pre.Name!= "0") & (data_pre.Name!= "1") & (data_pre.Name!= "2") & (data_pre.Name!= "3"), "Name"] = "4"
+    dummies_Name = pd.get_dummies(data_pre["Name"], prefix="Name")
     dummies_Cabin = pd.get_dummies(data_pre["Cabin"],prefix="Cabin")
     dummies_Embarked = pd.get_dummies(data_pre["Embarked"], prefix= "Embarked")
     dummies_Sex = pd.get_dummies(data_pre["Sex"], prefix= "Sex")
@@ -43,7 +49,7 @@ def get_data(file_name):
     dummies_Age = pd.get_dummies(data_pre["Age"], prefix="Age")
     dummies_Fare = pd.get_dummies(data_pre["Fare"], prefix="Fare")
 
-    data_pre = pd.concat([data_pre, dummies_Embarked, dummies_Sex, dummies_Pclass, dummies_Age, dummies_Cabin, dummies_Fare], axis=1)
+    data_pre = pd.concat([data_pre, dummies_Embarked, dummies_Sex, dummies_Pclass, dummies_Age, dummies_Cabin, dummies_Fare, dummies_Name], axis=1)
     data_pre.drop(columns=["Pclass","Sex","Embarked","Cabin","Name","Ticket","Age", "Fare"], inplace=True)
 
     return data_pre

@@ -37,13 +37,13 @@ def plot_learning_curve(model, X, y):
     plt.show()
 
 train_df = get_data("train.csv")
-train_f = train_df.filter(regex='Survived|SibSp|Parch|Sex_.*|Pclass_.*|Age_.*|Cabin_.*')
+train_f = train_df.filter(regex='Survived|SibSp|Parch|Sex_.*|Pclass_.*|Age_.*|Cabin_.*|Name_.*')
 train_np = train_f.values
 train_X = train_np[:,1:]
 train_y = train_np[:,0]
 
 test_df = get_data("test.csv")
-test_f = test_df.filter(regex='SibSp|Parch|Sex_.*|Pclass_.*|Age_.*|Cabin_.*')
+test_f = test_df.filter(regex='SibSp|Parch|Sex_.*|Pclass_.*|Age_.*|Cabin_.*|Name_.*')
 test_X = test_f.values
 
 rbf_kernel_svm_clf = Pipeline([
