@@ -5,8 +5,8 @@ from sklearn.ensemble import RandomForestRegressor
 def get_data(file_name):
     # 显示所有列
     pd.set_option('display.max_columns', None)
-    # 显示所有行
-    pd.set_option('display.max_rows', None)
+    # # 显示所有行
+    # pd.set_option('display.max_rows', None)
 
     data_pre = pd.read_csv("data/" + file_name)
     data_pre.loc[data_pre.Fare.isnull(),"Fare"] = np.mean(data_pre.Fare)
@@ -43,8 +43,8 @@ def get_data(file_name):
     data_pre.loc[data_pre.Fare <= 51.23,"Fare"] = 51.0
     data_pre.loc[(data_pre.Fare <= 102.47) & (data_pre.Fare > 51.23),"Fare"] = 102.0
     data_pre.loc[data_pre.Fare > 102.48 ,"Fare"] = 150.0
-    data_pre.loc[data_pre.Name.str.contains("Mr"), "Name"] = "0"
     data_pre.loc[data_pre.Name.str.contains("Mrs"), "Name"] = "1"
+    data_pre.loc[data_pre.Name.str.contains("Mr"), "Name"] = "0"
     data_pre.loc[data_pre.Name.str.contains("Miss"), "Name"] = "2"
     data_pre.loc[data_pre.Name.str.contains("Master"), "Name"] = "3"
     data_pre.loc[(data_pre.Name!= "0") & (data_pre.Name!= "1") & (data_pre.Name!= "2") & (data_pre.Name!= "3"), "Name"] = "4"

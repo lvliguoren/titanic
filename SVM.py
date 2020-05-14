@@ -44,6 +44,8 @@ train_y = train_np[:,0]
 
 test_df = get_data("test.csv")
 test_f = test_df.filter(regex='SibSp|Parch|Sex_.*|Pclass_.*|Age_.*|Cabin_.*|Name_.*')
+test_Cabin_8 = pd.DataFrame(np.zeros(shape=(418,1)))
+test_f.insert(23,"Cabin_8",test_Cabin_8)
 test_X = test_f.values
 
 rbf_kernel_svm_clf = Pipeline([
