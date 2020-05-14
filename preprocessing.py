@@ -31,8 +31,15 @@ def get_data(file_name):
         elif data_pre.loc[i, "Age"] > 64.28:
             data_pre.loc[i, "Age"] = 8
 
-    data_pre.loc[data_pre.Cabin.notnull(),"Cabin"] = "Yes"
-    data_pre.loc[data_pre.Cabin.isnull(),"Cabin"] = "No"
+    data_pre.Cabin.fillna("0", inplace=True)
+    data_pre.loc[data_pre.Cabin.str[0] == 'A', 'Cabin'] = 1
+    data_pre.loc[data_pre.Cabin.str[0] == 'B', 'Cabin'] = 2
+    data_pre.loc[data_pre.Cabin.str[0] == 'C', 'Cabin'] = 3
+    data_pre.loc[data_pre.Cabin.str[0] == 'D', 'Cabin'] = 4
+    data_pre.loc[data_pre.Cabin.str[0] == 'E', 'Cabin'] = 5
+    data_pre.loc[data_pre.Cabin.str[0] == 'F', 'Cabin'] = 6
+    data_pre.loc[data_pre.Cabin.str[0] == 'G', 'Cabin'] = 7
+    data_pre.loc[data_pre.Cabin.str[0] == 'T', 'Cabin'] = 8
     data_pre.loc[data_pre.Fare <= 51.23,"Fare"] = 51.0
     data_pre.loc[(data_pre.Fare <= 102.47) & (data_pre.Fare > 51.23),"Fare"] = 102.0
     data_pre.loc[data_pre.Fare > 102.48 ,"Fare"] = 150.0

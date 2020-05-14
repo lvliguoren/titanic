@@ -48,7 +48,7 @@ test_X = test_f.values
 
 rbf_kernel_svm_clf = Pipeline([
     # ("scaler", StandardScaler()),
-    ("svm_clf", SVC(kernel="rbf", gamma="auto",C=5))
+    ("svm_clf", SVC(kernel="rbf", gamma="auto",C=10))
 ])
 
 # plot_learning_curve(rbf_kernel_svm_clf, train_X, train_y)
